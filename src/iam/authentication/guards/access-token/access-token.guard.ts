@@ -13,22 +13,18 @@ export class AccessTokenGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-
     // NOTE: For GraphQL applications, you'd have to use the wrapper
     // GqlExecutionContext here instead
-
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-
     if(!token) {
       throw new UnauthorizedException();
     }
-
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
         this.jwtConfiguration,
-        );
+      );
       request[REQUEST_USER_KEY] = payload;
     } catch {
       throw new UnauthorizedException();
@@ -37,6 +33,7 @@ export class AccessTokenGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ _, token ] = request.headers.authorization?.split(' ') ?? [];
     return token;
   }
